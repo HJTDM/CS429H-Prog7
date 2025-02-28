@@ -1,0 +1,111 @@
+; r0: input port
+; r1: output port
+; r2: n numbers
+; r3: :takeinputs
+; r4: :nextinput
+; r5: :search
+; r6: left index
+; r7: right index
+; r8: temporary input
+; r9: value to search
+; r10: mid
+; r11: :searchcondition
+; r12: :searchloop
+; r13: :done
+; r14: stores 2 to divide by
+; r15: stores 8 to divide by
+; r16: :lessthan
+; r17: :greaterthan
+; r19: found boolean
+; r20: current value
+; r21: index offset
+; r22: stores 65544
+; r23: equal to condition
+; r24: :printfound
+; r25: character
+; r26: stores 65536
+.code
+	addi r1, 3
+	ld r3, :takeinputs
+	ld r4, :nextinput
+	ld r5, :search
+	ld r6, 0
+	ld r7, 65536
+	ld r22, 65544
+	ld r26, 65536
+	in r2, r0
+:takeinputs
+	brnz r4, r2
+	br r5
+:nextinput
+	in r8, r0
+	mov (r7)(0), r8
+	addi r7, 8
+	subi r2, 1
+	br r3
+:search
+	in r9, r0
+	addi r14, 2
+	addi r15, 8
+	sub r7, r7, r22
+	div r7, r7, r15
+	ld r11, :searchcondition
+	ld r12, :searchloop
+	ld r13, :done
+	ld r16, :lessthan
+	ld r17, :greaterthan
+:searchcondition
+	brgt r13, r6, r7
+:searchloop
+	add r10, r6, r7
+	div r10, r10, r14
+	mul r21, r10, r15
+	add r21, r21, r26
+	mov r20, (r21)(0)
+	brgt r17, r20, r9
+	xor r23, r20, r9
+	brnz r16, r23
+	mov r19, 1
+	br r13
+:greaterthan
+	subi r10, 1
+	mov r7, r10
+	br r11
+:lessthan
+	addi r10, 1
+	mov r6, r10
+	br r11
+:done
+	ld r24, :printfound
+	brnz r24, r19
+	ld r25, 110
+	out r1, r25
+	ld r25, 111
+	out r1, r25
+	ld r25, 116
+	out r1, r25
+	ld r25, 32
+	out r1, r25
+	ld r25, 102
+	out r1, r25
+	ld r25, 111
+	out r1, r25
+	ld r25, 117
+	out r1, r25
+	ld r25, 110
+	out r1, r25
+	ld r25, 100
+	out r1, r25
+	halt
+:printfound
+	ld r25, 102
+	out r1, r25
+	ld r25, 111
+	out r1, r25
+	ld r25, 117
+	out r1, r25
+	ld r25, 110
+	out r1, r25
+	ld r25, 100
+	out r1, r25
+	halt
