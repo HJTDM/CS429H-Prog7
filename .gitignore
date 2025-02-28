@@ -1,5 +1,7 @@
 assembler_tests
 simulator_tests
+hw7-asm
+hw7-sim
 binaryout.tko
 fibout.tko
 matmulout.tko
