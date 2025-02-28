@@ -1,0 +1,12 @@
+; This is a test file
+; This is code
+.code
+	priv r0, r0, r0, 0
+	priv r0, r0, r0, 1
+	priv r0, r0, r0, 2
+	priv r1, r2, r0, 3
+	priv r3, r25, r0, 4
+; This is data
+.data
+	64
+	54665454

@@ -1,0 +1,2 @@
+make asm
+make sim
