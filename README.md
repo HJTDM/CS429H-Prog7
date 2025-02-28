@@ -12,7 +12,11 @@
 To compile and run the program, clone the repository and run the following commands:
 ```bash
 ./build.sh
+
+# Assembler
 ./hw7-asm [inputFile] [outputFile]  # Replace [inputFile] and [outputFile] with the path to the input and output file
+
+# Simulator
 ./hw7-sim [inputFile] # Replace [inputFile] with the path to the input file
 ```
 
@@ -20,8 +24,11 @@ To compile and run the program, clone the repository and run the following comma
 
 Alternatively, use the makefile to compile (with debug flags) and run the program with the following commands:
 ```bash
+# Assembler
 make asm
 make runasm IN=[inputFile] OUT=[outputFile]  # Replace [inputFile] and [outputFile] with the path to the input and output file
+
+# Simulator
 make sim
 make runsim IN=[inputFile]  # Replace [inputFile] with the path to the input file
 ```
@@ -36,4 +43,4 @@ make asmtests
 make simtests
 ```
 
-A [custom testing framework](include/test_framework.h) is used to allow for assertions (true/false, equals/not equals, etc.).# CS429H-Prog7
+The tests involve primarily black-box unit tests on individual methods such as HashMap operations, instructions, or utility methods. A [custom testing framework](include/test_framework.h) is used to allow for assertions (true/false, equals/not equals, etc.).
