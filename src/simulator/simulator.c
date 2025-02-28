@@ -18,6 +18,7 @@ TinkerFileHeader* create_tinker_file_header(){
 		exit(1);
 	}
 	
+	// Initialize file header
 	tfh->fileType = FILE_TYPE;
 	tfh->codeBegin = INIT_CODE_ADDR;
 	tfh->dataBegin = INIT_DATA_ADDR;
@@ -86,10 +87,11 @@ int load_memory(const char* filename, Processor* processor){
 		return -1;
 	}
 
-	// Get file header data
+	// Get file header data from object file
 	TinkerFileHeader* tfh = create_tinker_file_header();
 	fread(tfh, sizeof(TinkerFileHeader), 1, fp);
 
+	// Check that the code segment is not too large (will overlap with data)
 	if(tfh->codeSize > INIT_DATA_ADDR - INIT_CODE_ADDR){
 		fprintf(stderr, "Code segment is too large\n");
 		free(tfh);
@@ -97,6 +99,7 @@ int load_memory(const char* filename, Processor* processor){
 		return -1;
 	}
 
+	// Load code and data from object file into memory
 	fread(&processor->memory[tfh->codeBegin], tfh->codeSize, 1, fp);
 	fread(&processor->memory[tfh->dataBegin], tfh->dataSize, 1, fp);
 

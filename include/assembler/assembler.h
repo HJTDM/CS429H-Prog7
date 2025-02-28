@@ -7,6 +7,7 @@
 
 #include "hashmap.h"
 
+/// @brief A struct representing the file header for a tinker program
 typedef struct TinkerFileHeader {
 	uint64_t fileType; // Currently, 0
 	uint64_t codeBegin; // Address into which the code is to be loaded in memory
@@ -15,6 +16,11 @@ typedef struct TinkerFileHeader {
 	uint64_t dataSize; // Size of the data segment (could be 0)
 } TinkerFileHeader;
 
+/**
+ * @brief Creates a pointer to a new tinker file header
+ * 
+ * @return The pointer to the new tinker file header
+ */
 TinkerFileHeader* create_tinker_file_header();
 
 /**

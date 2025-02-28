@@ -4,6 +4,7 @@
 
 #include "test_framework.h"
 #include "assembler/instruction.h"
+#include "assembler/stack.h"
 #include "assembler/label.h"
 #include "assembler/hashmap.h"
 #include "assembler/utils.h"
@@ -46,6 +47,45 @@ TEST_CASE(test_instr_hashmap){
 	ASSERT_NULL(hashmap_get(ihm, "mov"));
 
 	destroy_hashmap(ihm, destroy_instruction);
+	return 0;
+}
+
+// Checks if stack push pop peek works
+TEST_CASE(test_stack_push_pop_peek){
+	Stack* stack = create_stack();
+
+	char* in1 = (char*) malloc(2);
+	in1[0] = 'a';
+	in1[1] = '\0';
+	char* in2 = (char*) malloc(2);
+	in2[0] = 'b';
+	in2[1] = '\0';
+	char* in3 = (char*) malloc(2);
+	in3[0] = 'c';
+	in3[1] = '\0';
+
+	stack_push(stack, in1);
+	stack_push(stack, in2);
+	stack_push(stack, in3);
+
+	ASSERT_TRUE(strcmp(stack_peek(stack), "c") == 0);
+	char* str1 = stack_pop(stack);
+	ASSERT_TRUE(strcmp(stack_peek(stack), "b") == 0);
+	char* str2 = stack_pop(stack);
+	ASSERT_TRUE(strcmp(stack_peek(stack), "a") == 0);
+	char* str3 = stack_pop(stack);
+
+	printf("%s\n", str1);
+
+	printf("%s\n", str2);
+	ASSERT_TRUE(strcmp(str1, "c") == 0);
+	ASSERT_TRUE(strcmp(str2, "b") == 0);
+	ASSERT_TRUE(strcmp(str3, "a") == 0);
+
+	free(str1);
+	free(str2);
+	free(str3);
+	free(stack);
 	return 0;
 }
 
@@ -210,9 +250,23 @@ TEST_CASE(test_is_valid_register){
 // Test is_valid_literal can identify valid literals
 TEST_CASE(test_is_valid_literal){
 	HashMap* lhm = create_hashmap();
-	hashmap_insert(lhm, ":L1", create_label(":L1", 0x1000));
-	hashmap_insert(lhm, ":L2", create_label(":L2", 0x1004));
-	hashmap_insert(lhm, ":L3", create_label(":L3", 0x1008));
+
+	char* in1 = (char*) malloc(4);
+	in1[0] = ':';
+	in1[0] = 'L';
+	in1[0] = '1';
+	char* in2 = (char*) malloc(4);
+	in2[0] = ':';
+	in2[0] = 'L';
+	in2[0] = '2';
+	char* in3 = (char*) malloc(4);
+	in3[0] = ':';
+	in3[0] = 'L';
+	in3[0] = '3';
+
+	hashmap_insert(lhm, ":L1", create_label(in1, 0x1000));
+	hashmap_insert(lhm, ":L2", create_label(in2, 0x1004));
+	hashmap_insert(lhm, ":L3", create_label(in3, 0x1008));
 
 	char str1[] = "563";
 	ASSERT_TRUE(is_valid_literal(lhm, "add", str1));
@@ -228,6 +282,8 @@ TEST_CASE(test_is_valid_literal){
 
 	char str5[] = ":L4";
 	ASSERT_FALSE(is_valid_literal(lhm, "ld", str5));
+
+	destroy_hashmap(lhm, destroy_label);
 	return 0;
 }
 
@@ -248,6 +304,10 @@ int main() {
 	printf("HashMap tests:\n");
 	RUN_TEST(test_label_hashmap);
 	RUN_TEST(test_instr_hashmap);
+	printf("\n");
+
+	printf("Stack tests:\n");
+	RUN_TEST(test_stack_push_pop_peek);
 	printf("\n");
 
 	printf("Instruction tests:\n");

@@ -116,10 +116,12 @@ int populate_labels(FILE* in, HashMap* lhm, TinkerFileHeader* tfh){
 				return -1;
 			}
 
+			// Add label to label stack
 			stack_push(labelStack, label);
 		}
 		// Process instruction lines
 		else if(line[0] == '\t'){
+			// Pop all labels from stack and add to hashmap
 			while(!stack_is_empty(labelStack)){
 				if(currentDirective == 'C'){
 					char* label = stack_pop(labelStack);
@@ -131,6 +133,7 @@ int populate_labels(FILE* in, HashMap* lhm, TinkerFileHeader* tfh){
 				}
 			}
 
+			// Calculate new address based on directive type
 			int8_t change = change_in_address(line);
 			if(change == -1){
 				fprintf(stderr, "Error: invalid instruction format\n");
@@ -151,6 +154,7 @@ int populate_labels(FILE* in, HashMap* lhm, TinkerFileHeader* tfh){
 		}
 	}
 
+	// Pop the rest of the labels from the stack and add to hashmap
 	while(!stack_is_empty(labelStack)){
 		if(currentDirective == 'C'){
 			char* label = stack_pop(labelStack);
@@ -162,6 +166,7 @@ int populate_labels(FILE* in, HashMap* lhm, TinkerFileHeader* tfh){
 		}
 	}
 	
+	// Calculate the size of the code and data segments
 	tfh->codeSize = codeAddress - INIT_CODE_ADDR;
 	tfh->dataSize = dataAddress - INIT_DATA_ADDR;
 	destroy_stack(labelStack);
@@ -172,9 +177,11 @@ int resolve_program(FILE* in, FILE* out, HashMap* lhm, HashMap* ihm, TinkerFileH
 	char currentDirective = 'N';
 	bool hasCodeDirective = false;
 
+	// Create data array to consolidate data separately from code
 	uint64_t* dataBinary = (uint64_t*) malloc(sizeof(uint64_t) * (tfh->dataSize / 8));
 	uint64_t dataCount = 0;
 
+	// Write file header to output file
 	fwrite(tfh, sizeof(TinkerFileHeader), 1, out);
 	uint64_t currentLine = 1;
 
@@ -223,6 +230,7 @@ int resolve_program(FILE* in, FILE* out, HashMap* lhm, HashMap* ihm, TinkerFileH
 		return -1;
 	}
 
+	// Write all data last to output file
 	fwrite(dataBinary, sizeof(uint64_t), (tfh->dataSize / 8), out);
 	free(dataBinary);
 	return 0;
