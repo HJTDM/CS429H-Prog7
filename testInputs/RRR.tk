@@ -1,8 +1,0 @@
-; This is a test file
-.code
-	add r3, r7, r5
-; This is data
-:L1
-	and r31, r7, r12
-.data
-	56987742

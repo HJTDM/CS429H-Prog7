@@ -41,6 +41,7 @@ void generate_object_file(const char* inputFile, const char* outputFile){
 		fprintf(stderr, "Error: failed to populate LabelHashMap\n");
 		destroy_hashmap(lhm, destroy_label);
 		destroy_hashmap(ihm, destroy_instruction);
+		free(tfh);
 		fclose(in);
 		fclose(out);
 		remove(outputFile);
@@ -53,6 +54,7 @@ void generate_object_file(const char* inputFile, const char* outputFile){
 		fprintf(stderr, "Error: failed to create object file\n");
 		destroy_hashmap(lhm, destroy_label);
 		destroy_hashmap(ihm, destroy_instruction);
+		free(tfh);
 		fclose(in);
 		fclose(out);
 		remove(outputFile);
@@ -61,6 +63,7 @@ void generate_object_file(const char* inputFile, const char* outputFile){
 
 	destroy_hashmap(lhm, destroy_label);
 	destroy_hashmap(ihm, destroy_instruction);
+	free(tfh);
 	fclose(in);
 	fclose(out);
 }
@@ -221,5 +224,6 @@ int resolve_program(FILE* in, FILE* out, HashMap* lhm, HashMap* ihm, TinkerFileH
 	}
 
 	fwrite(dataBinary, sizeof(uint64_t), (tfh->dataSize / 8), out);
+	free(dataBinary);
 	return 0;
 }

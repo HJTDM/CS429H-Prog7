@@ -182,6 +182,39 @@ TEST_CASE(test_brrL){
 	return 0;
 }
 
+TEST_CASE(test_brnz){
+	Processor* processor = create_processor();
+	processor->registers[0] = 0x1589;
+
+	// Source register is 0
+	brnz(processor, 0, 1, 0, 0);
+	processor->pc += 4;
+	ASSERT_EQUALS(processor->pc, 0x2004);
+
+	// Source register is not 0
+	brnz(processor, 0, 0, 0, 0);
+	processor->pc += 4;
+	ASSERT_EQUALS(processor->pc, 0x1589);
+	return 0;
+}
+
+TEST_CASE(test_call){
+	Processor* processor = create_processor();
+	processor->registers[0] = 0x1589;
+
+	call(processor, 0, 0, 0, 0);
+
+	// Check address on stack
+	uint64_t address;
+	memcpy(&address, &(processor->memory[processor->registers[31] - 8]), sizeof(address));
+	ASSERT_EQUALS(address, 0x2004);
+
+	// Check current program counter
+	processor->pc += 4;
+	ASSERT_EQUALS(processor->pc, 0x1589);
+	return 0;
+}
+
 TEST_CASE(test_return){
 	Processor* processor = create_processor();
 	processor->registers[0] = 0x1589;
@@ -192,6 +225,24 @@ TEST_CASE(test_return){
 	// Check current program counter
 	processor->pc += 4;
 	ASSERT_EQUALS(processor->pc, 0x2004);
+	return 0;
+}
+
+TEST_CASE(test_brgt){
+	Processor* processor = create_processor();
+	processor->registers[0] = 2;
+	processor->registers[1] = 3;
+	processor->registers[2] = 0x8956;
+
+	// Not greater
+	brgt(processor, 2, 0, 1, 0);
+	processor->pc += 4;
+	ASSERT_EQUALS(processor->pc, 0x2004);
+
+	// Is greater
+	brgt(processor, 2, 1, 0, 0);
+	processor->pc += 4;
+	ASSERT_EQUALS(processor->pc, 0x8956);
 	return 0;
 }
 
@@ -357,7 +408,10 @@ int main() {
 	RUN_TEST(test_br);
 	RUN_TEST(test_brr);
 	RUN_TEST(test_brrL);
+	RUN_TEST(test_brnz);
+	RUN_TEST(test_call);
 	RUN_TEST(test_return);
+	RUN_TEST(test_brgt);
 	RUN_TEST(test_priv);
 	RUN_TEST(test_movRRL);
 	RUN_TEST(test_movRR);

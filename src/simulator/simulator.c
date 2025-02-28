@@ -92,12 +92,15 @@ int load_memory(const char* filename, Processor* processor){
 
 	if(tfh->codeSize > INIT_DATA_ADDR - INIT_CODE_ADDR){
 		fprintf(stderr, "Code segment is too large\n");
+		free(tfh);
+		fclose(fp);
 		return -1;
 	}
 
 	fread(&processor->memory[tfh->codeBegin], tfh->codeSize, 1, fp);
 	fread(&processor->memory[tfh->dataBegin], tfh->dataSize, 1, fp);
 
+	free(tfh);
 	fclose(fp);
 	return 0;
 }

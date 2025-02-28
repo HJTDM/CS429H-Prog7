@@ -1,6 +1,0 @@
-.code
-	mov r4, (r7)(123)
-	mov r5, r9
-	mov r8, 100
-	mov (r12)(192), r20
-	mov (r31)(-8), r7

@@ -30,7 +30,7 @@ leakcheckasm: hw7-asm
 	valgrind --leak-check=full ./hw7-asm $(IN) $(OUT)
 
 leakchecksim: hw7-sim
-	valgrind --leak-check=full ./hw7-sim $(IN) $(OUT)
+	valgrind --leak-check=full ./hw7-sim $(IN)
 
 asmtests: tests/assembler_tests.c $(ASM_SRC_FILES) $(ASM_INC_FILES)
 	$(CC) $(DEBUG_FLAGS) -o assembler_tests tests/assembler_tests.c $(ASM_SRC_FILES) -I$(INC_DIR) && ./assembler_tests
