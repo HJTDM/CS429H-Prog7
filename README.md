@@ -12,15 +12,18 @@
 To compile and run the program, clone the repository and run the following commands:
 ```bash
 ./build.sh
-./hw5 [inputFile] [outputFile]  # Replace [inputFile] and [outputFile] with the path to the input and output file
+./hw7-asm [inputFile] [outputFile]  # Replace [inputFile] and [outputFile] with the path to the input and output file
+./hw7-sim [inputFile] # Replace [inputFile] with the path to the input file
 ```
 
 ### Using the Makefile
 
 Alternatively, use the makefile to compile (with debug flags) and run the program with the following commands:
 ```bash
-make main
-make runmain IN=[inputFile] OUT=[outputFile]  # Replace [inputFile] and [outputFile] with the path to the input and output file
+make asm
+make runasm IN=[inputFile] OUT=[outputFile]  # Replace [inputFile] and [outputFile] with the path to the input and output file
+make sim
+make runsim IN=[inputFile]  # Replace [inputFile] with the path to the input file
 ```
 
 ## Compiling and Running Tests
@@ -29,7 +32,8 @@ make runmain IN=[inputFile] OUT=[outputFile]  # Replace [inputFile] and [outputF
 
 To compile and run the tests, clone the repository and run the following command:
 ```bash
-make tests
+make asmtests
+make simtests
 ```
 
-The unit tests involve black-box testing on the HashMap, instruction, and utility methods. A [custom testing framework](include/test_framework.h) is used to allow for assertions (true/false, equals/not equals, etc.).# CS429H-Prog7
+A [custom testing framework](include/test_framework.h) is used to allow for assertions (true/false, equals/not equals, etc.).# CS429H-Prog7

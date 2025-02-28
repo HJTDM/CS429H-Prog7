@@ -14,9 +14,6 @@ INC_DIR = include
 ASM_INC_FILES = $(wildcard $(ASM_INC_DIR)/assembler/*.h)
 SIM_INC_FILES = $(wildcard $(ASM_INC_DIR)/simulator/*.h)
 
-# TEST_DIR = tests
-# TEST_FILES = $(wildcard $(TEST_DIR)/*.c)
-
 asm: $(ASM_SRC_FILES) $(ASM_INC_FILES)
 	$(CC) $(DEBUG_FLAGS) -o hw7-asm src/assembler/asm_main.c $(ASM_SRC_FILES) -I $(INC_DIR)
 
@@ -35,8 +32,11 @@ leakcheckasm: hw7-asm
 leakchecksim: hw7-sim
 	valgrind --leak-check=full ./hw7-sim $(IN) $(OUT)
 
-# tests: $(TEST_FILES) $(SRC_FILES) $(INC_FILES)
-# 	$(CC) $(DEBUG_FLAGS) -o tinker_tests $(TEST_FILES) $(SRC_FILES) -I$(INC_DIR) && ./tinker_tests
+asmtests: tests/assembler_tests.c $(ASM_SRC_FILES) $(ASM_INC_FILES)
+	$(CC) $(DEBUG_FLAGS) -o assembler_tests tests/assembler_tests.c $(ASM_SRC_FILES) -I$(INC_DIR) && ./assembler_tests
+
+simtests: tests/simulator_tests.c $(SIM_SRC_FILES) $(SIM_INC_FILES)
+	$(CC) $(DEBUG_FLAGS) -o simulator_tests tests/simulator_tests.c $(SIM_SRC_FILES) -I$(INC_DIR) && ./simulator_tests
 
 .PHONY: clean
 

@@ -3,10 +3,10 @@
 #include <string.h>
 
 #include "test_framework.h"
-#include "instruction.h"
-#include "label.h"
-#include "hashmap.h"
-#include "utils.h"
+#include "assembler/instruction.h"
+#include "assembler/label.h"
+#include "assembler/hashmap.h"
+#include "assembler/utils.h"
 
 int tests_run = 0;
 int tests_failed = 0;
@@ -15,15 +15,21 @@ int tests_failed = 0;
 TEST_CASE(test_label_hashmap){
 	HashMap* lhm = create_hashmap();
 
-	hashmap_insert(lhm, ":L1", create_label(":L1", 0x1010));
+	char* str = (char*)malloc(4);
+	str[0] = ':';
+	str[1] = 'L';
+	str[2] = '0';
+	str[3] = '\0';
+	hashmap_insert(lhm, str, create_label(str, 0x1010));
 
-	Label* l1 = (Label*) hashmap_get(lhm, ":L1");
-	ASSERT_TRUE(strcmp(l1->name, ":L1") == 0);
+	Label* l1 = (Label*) hashmap_get(lhm, str);
+	ASSERT_TRUE(strcmp(l1->name, ":L0\0") == 0);
 	ASSERT_EQUALS(l1->address, 0x1010);
 
-	ASSERT_NULL(hashmap_get(lhm, ":L2"));
+	ASSERT_NULL(hashmap_get(lhm, ":L2\0"));
 
 	destroy_hashmap(lhm, destroy_label);
+	return 0;
 }
 
 // Test that instruction hashmap methods work as intended
@@ -40,6 +46,7 @@ TEST_CASE(test_instr_hashmap){
 	ASSERT_NULL(hashmap_get(ihm, "mov"));
 
 	destroy_hashmap(ihm, destroy_instruction);
+	return 0;
 }
 
 // Test that process directive returns the correct character based on the directive
@@ -55,6 +62,7 @@ TEST_CASE(test_process_directive){
 
 	char str4[] = ".invalid";
 	ASSERT_EQUALS(process_directive(str4), 'N');
+	return 0;
 }
 
 // Test that encode_instruction correctly encodes into 32-bit intgers
@@ -82,6 +90,7 @@ TEST_CASE(test_encode_instruction){
 
 	uint32_t mov = encode_instruction(0x10, 6, 24, 0, -231);
 	ASSERT_EQUALS(mov, 0x81b00f19);
+	return 0;
 }
 
 // Test that change_in_address returns the correct value for instructions/macros/data
@@ -103,6 +112,8 @@ TEST_CASE(test_change_in_address){
 
 	char str6[] = "";
 	ASSERT_EQUALS(change_in_address(str6), -1);
+
+	return 0;
 }
 
 // Test is_data can identify valid numerical strings
@@ -124,6 +135,7 @@ TEST_CASE(test_is_data){
 
 	char str6[] = "\t-123456";
 	ASSERT_FALSE(is_data(str6));
+	return 0;
 }
 
 // Test is_empty can identify empty/whitespace strings
@@ -136,6 +148,7 @@ TEST_CASE(test_is_empty){
 
 	char str3[] = "  \t  334   ";
 	ASSERT_FALSE(is_empty(str3));
+	return 0;
 }
 
 // Test trim works as expected on leading and trailing whitespace
@@ -156,6 +169,7 @@ TEST_CASE(test_trim){
 	char str4[] = "       ";
 	trim(str4);
 	ASSERT_TRUE(strcmp(str4, "") == 0);
+	return 0;
 }
 
 // Test is_uint64 checks that a string is an unsigned 64-bit integer
@@ -174,6 +188,7 @@ TEST_CASE(test_is_uint64){
 
     char str5[] = "-1";
     ASSERT_FALSE(is_uint64(str5));
+	return 0;
 }
 
 // Test is_valid_register can identify valid registers
@@ -189,6 +204,7 @@ TEST_CASE(test_is_valid_register){
 
     char str4[] = "32";
     ASSERT_FALSE(is_valid_register(str4));
+	return 0;
 }
 
 // Test is_valid_literal can identify valid literals
@@ -212,6 +228,7 @@ TEST_CASE(test_is_valid_literal){
 
 	char str5[] = ":L4";
 	ASSERT_FALSE(is_valid_literal(lhm, "ld", str5));
+	return 0;
 }
 
 // Test is_valid_labels can identify valid labels
@@ -224,6 +241,7 @@ TEST_CASE(test_is_valid_label){
 
 	char str3[] = ":L1  L2";
 	ASSERT_FALSE(is_valid_label(str3));
+	return 0;
 }
 
 int main() {
