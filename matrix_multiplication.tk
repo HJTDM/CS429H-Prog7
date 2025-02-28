@@ -1,0 +1,108 @@
+; r0: input port
+; r1: output port
+; r2: matrix dimension
+; r3: :getFirstMatrixInputLoop/multloopicondition
+; r4: :getSecondMatrixInputLoop/multloopjcondition
+; r5: matrix1 counter/multloopkcondition
+; r6: matrix2 counter/i
+; r7: j
+; r8: :getFirstMatrixInputCondition/k
+; r9: :getSecondMatrixInputCondition (free)
+; r10: matrix1 begin
+; r11: matrix2 begin
+; r12: input buffer
+; r13: matrix2 counter
+; r14: :getSecondMatrixInput
+; r15: :startMultiplication
+; r16: output buffer
+; r17: :multloopi
+; r19: :multloopk
+; r20: A index buffer
+; r21: B index buffer
+; r22: stores 8
+; r23: A buffer
+; r24: B buffer
+; r25: :printoutput
+; r26: A * B
+.code
+	addi r1, 1
+	in r2, r0
+	ld r3, :getFirstMatrixInputLoop
+	ld r4, :getSecondMatrixInputLoop
+	mul r5, r2, r2
+	mul r6, r2, r2
+	ld r8, :getFirstMatrixInputCondition
+	ld r9, :getSecondMatrixInputCondition
+	ld r14, :getSecondMatrixInput
+	ld r15, :startMultiplication
+	ld r10, 65536
+:getFirstMatrixInputCondition
+	brnz r3, r5
+	br r14
+:getFirstMatrixInputLoop
+	in r12, r0
+	mov (r10)(0), r12
+	addi r10, 8
+	subi r5, 1
+	br r8
+:getSecondMatrixInput
+	mov r11, r10
+	mov r13, r10
+	ld r10, 65536
+:getSecondMatrixInputCondition
+	brnz r4, r6
+	br r15
+:getSecondMatrixInputLoop
+	in r12, r0
+	mov (r13)(0), r12
+	addi r13, 8
+	subi r6, 1
+	br r9
+:startMultiplication
+	clr r16
+	clr r6
+	ld r3, :multloopicondition
+	ld r4, :multloopjcondition
+	ld r5, :multloopkcondition
+	ld r17, :multloopi
+	ld r19, :multloopk
+	ld r25, :printoutput
+	addi r22, 8
+:multloopicondition
+	clr r7
+	brgt r4, r2, r6
+	halt
+:multloopi
+	addi r6, 1
+	br r3
+:multloopjcondition
+	clr r8
+	clr r16
+	brgt r5, r2, r7
+	br r17
+:printoutput
+	out r1, r16
+	addi r7, 1
+	br r4
+:multloopkcondition
+	brgt r19, r2, r8
+	br r25
+:multloopk
+	clr r20
+	clr r21
+	add r20, r20, r2
+	mul r20, r20, r6
+	add r20, r20, r8
+	mul r20, r20, r22
+	add r20, r20, r10
+	add r21, r21, r2
+	mul r21, r21, r8
+	add r21, r21, r7
+	mul r21, r21, r22
+	add r21, r21, r11
+	mov r23, (r20)(0)
+	mov r24, (r21)(0)
+	mulf r26, r23, r24
+	addf r16, r16, r26
+	addi r8, 1
+	br r5

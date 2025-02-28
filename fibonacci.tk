@@ -12,9 +12,11 @@
 ; r11: result
 ; r12: :casenot0
 .code
+; Get value of n
 	in r2, r0
 	addi r1, 1
 	ld r12, :casenot0
+; Check if n is 0. If so, print 0
 	brnz r12, r2
 	out r1, r0
 	halt
@@ -27,24 +29,33 @@
 	ld r6, :casenot2
 	ld r9, :loop
 	ld r10, :condition
+; Check if n is 1. If so, print 0
 	brnz r5, r3
 	out r1, r3
 	halt
 :casenot1
+; Check if n is 2. If so, print 1
 	brnz r6, r4
 	out r1, r3
 	halt
 :casenot2
+; Load two registers with base cases 0 and 1
 	addi r7, 0
 	addi r8, 1
+; Start at n = 2
 	subi r2, 2
 :condition
+; Check that n is not zero. If so, keep looping
 	brnz r9, r2
+; Print answer
 	out r1, r11
 	halt
 :loop
+; Iteratively calculate nth fib number
 	add r11, r7, r8
+; Update base registers
 	mov r7, r8
 	mov r8, r11
+; Decrement counter
 	subi r2, 1
 	br r10

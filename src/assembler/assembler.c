@@ -173,6 +173,7 @@ int resolve_program(FILE* in, FILE* out, HashMap* lhm, HashMap* ihm, TinkerFileH
 	uint64_t dataCount = 0;
 
 	fwrite(tfh, sizeof(TinkerFileHeader), 1, out);
+	uint64_t currentLine = 1;
 
 	char line[256];
 	while(fgets(line, sizeof(line), in)){
@@ -204,10 +205,12 @@ int resolve_program(FILE* in, FILE* out, HashMap* lhm, HashMap* ihm, TinkerFileH
 				}
 
 				if(process_instruction(out, lhm, ihm, line) != 0){
-					fprintf(stderr, "Error: failed to process instruction\n");
+					fprintf(stderr, "Error: failed to process instruction at line %lu\n", currentLine);
 					return -1;
 				}
 			}
+			
+			currentLine++;
 		}
 	}
 
