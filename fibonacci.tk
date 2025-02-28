@@ -1,0 +1,50 @@
+; r0: input port
+; r1: output port
+; r2: n
+; r3: 1
+; r4: 2
+; r5: :casenot1
+; r6: :casenot2
+; r7: 0
+; r8: 1
+; r9: :loop
+; r10: :condition
+; r11: result
+; r12: :casenot0
+.code
+	in r2, r0
+	addi r1, 1
+	ld r12, :casenot0
+	brnz r12, r2
+	out r1, r0
+	halt
+:casenot0
+	addi r3, 1
+	addi r4, 2
+	sub r3, r2, r3
+	sub r4, r2, r4
+	ld r5, :casenot1
+	ld r6, :casenot2
+	ld r9, :loop
+	ld r10, :condition
+	brnz r5, r3
+	out r1, r3
+	halt
+:casenot1
+	brnz r6, r4
+	out r1, r3
+	halt
+:casenot2
+	addi r7, 0
+	addi r8, 1
+	subi r2, 2
+:condition
+	brnz r9, r2
+	out r1, r11
+	halt
+:loop
+	add r11, r7, r8
+	mov r7, r8
+	mov r8, r11
+	subi r2, 1
+	br r10
